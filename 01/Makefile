@@ -1,10 +1,10 @@
 .PHONEY: build run clean
 
-build: 01.go
-	go build 01.go
+build: main.go
+	go build main.go
 
 run: build
-	cat input | ./01
+	cat input | ./main
 
 clean:
-	-rm ./01
+	-rm ./main
