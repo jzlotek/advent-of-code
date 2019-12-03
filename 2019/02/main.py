@@ -1,8 +1,10 @@
 import itertools
 import copy
+import sys
+sys.path.append('../..')
+from util.parsing import parse_list
 
-with open("input", 'r') as f:
-    orig = [int(c) for c in f.readline().split(',')]
+orig = parse_list()
 
 ops = copy.deepcopy(orig)
 
