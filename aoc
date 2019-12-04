@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+# Script to automate AOC fetching and submisison
+# Required: loguru, requests
+
+import argparse
+import datetime
+import loguru
+import os
+import pathlib
+import requests
+import shutil
+import time
+
+logger = loguru.logger
+
+def create_file(i, path, file_name):
+    with open(os.path.join(path, file_name), 'w') as f:
+        f.writelines(i)
+
+
+def get_iteration_count(offset):
+    iteration = 180
+    if offset < 20:
+        iteration = 1
+    elif offset < 60:
+        iteration = 5
+    elif offset < 120:
+        iteration = 10
+    elif offset < 180:
+        iteration = 20
+    elif offset < 540:
+        iteration = 60
+    return iteration
+
+
+def sync_wait():
+    """
+    Waits until midnight of the next day to grab prompt immediately
+    """
+    now = datetime.datetime.now()
+    end = now + datetime.timedelta(days=1)
+    end = datetime.datetime(end.year, end.month, end.day, 0, 0, 0, 0)
+
+    offset = (end - now).total_seconds()
+    iteration = get_iteration_count(offset)
+
+
+    while offset > 0:
+        logger.info('Waiting {} seconds | {} seconds remain', iteration, offset)
+        time.sleep(iteration)
+        offset -= iteration
+        iteration = get_iteration_count(offset)
+
+    now = time.time()
+    offset = (24 * 60 * 60) - (now % (24 * 60 * 60))
+    if offset < 1000:
+        time.sleep(offset)
+
+def init(dir_path, data, args):
+    """
+    Grabs initial prompt and bootstraps python files
+    """
+    day, year = args.day, args.year
+    python_main_path = os.path.join(dir_path, "main.py")
+    if not os.path.isfile(python_main_path):
+        template_path = os.path.join(path, 'util/python.template')
+        shutil.copy(template_path, python_main_path)
+
+    if args.wait:
+        sync_wait()
+        logger.info("GOGOGOGOGO")
+
+    session = requests.Session()
+
+    logger.info("Getting input for day: {}, year {}", day, year)
+    r = session.get(f'https://adventofcode.com/{year}/day/{day}/input', cookies=data)
+    if r.status_code != 200:
+        logger.error(r.text)
+        exit(1)
+
+    create_file(r.text, dir_path, 'input')
+
+    logger.info("Getting prompt for day: {}, year: {}", day, year)
+    r = session.get(f'https://adventofcode.com/{year}/day/{day}', cookies=data)
+    if r.status_code != 200:
+        logger.error(r.text)
+        exit(1)
+
+    create_file(r.text, dir_path, 'prompt.html')
+    logger.info("All set. Good to go!")
+
+
+def submit(dir_path, data, args):
+    if not args.part:
+        logger.error("Must provide a part if trying to submit")
+        exit(1)
+    if not args.answer:
+        logger.error("Must provide an answer if trying to submit")
+        exit(1)
+
+    logger.info("Attempting to submit day: {}, year: {}, part: {}", args.day, args.year, args.part)
+    session = requests.Session()
+    r = session.post(
+            f'https://adventofcode.com/{args.year}/day/{args.day}/answer',
+            cookies=data,
+            data={'level': args.part, 'answer': data_types[args.data_type](args.answer)}
+        )
+
+    res = r.text
+    if "That's not the right answer" in res:
+        logger.error("Incorrect answer for day: {}, year: {}, part: {}", args.day, args.year, args.part)
+    else:
+        logger.info("Correct answer for day: {}, year: {}, part: {}", args.day, args.year, args.part)
+        logger.info("Refetching prompt")
+        logger.info("Getting prompt for day: {}, year: {}", args.day, args.year)
+        r = session.get(f'https://adventofcode.com/{args.year}/day/{args.day}', cookies=data)
+        if r.status_code != 200:
+            logger.error(r.text)
+            exit(1)
+
+        create_file(r.text, dir_path, 'prompt.html')
+
+
+commands = {
+    'init': init,
+    'submit': submit
+}
+
+data_types = {
+    'int': int,
+    'str': str
+}
+
+if __name__ == "__main__":
+    next_day = datetime.datetime.now() + datetime.timedelta(days=1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", choices=commands.keys(), nargs='?', default='init')
+    parser.add_argument("part", default=None, nargs='?')
+    parser.add_argument("answer", default=None, nargs='?')
+    parser.add_argument("-d", type=int, default=next_day.day, dest="day")
+    parser.add_argument("-y", type=int, default=next_day.year, dest="year")
+    parser.add_argument("-type", type=str, default='int', choices=data_types.keys(), dest="data_type")
+    parser.add_argument('-w', action="store_true", default=False, required=False, dest="wait")
+    args = parser.parse_args()
+
+
+    path = os.path.dirname(os.path.abspath(__file__))
+    cookie_path = os.path.join(path, "cookie")
+
+    if not os.path.isfile(cookie_path):
+        print("Need to supply cookie file")
+        exit(1)
+
+    # Read in cookie file placed in root directory and use it as session token
+    with open(cookie_path, 'r') as f:
+        cookie = f.readline()
+
+    session_cookie = {'session': cookie.strip()}
+
+    dir_path = os.path.join(path, "%d/%02d" % (args.year, args.day))
+
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+
+    commands[args.command](dir_path, session_cookie, args)
+
