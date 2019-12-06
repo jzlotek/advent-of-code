@@ -43,22 +43,10 @@ def isvalid2(num):
 if __name__ == "__main__":
     num = parse_as_str()
     start, stop = list(map(int, num.split('-')))
-    nums = []
 
-    for i in range(stop - start + 1):
-        if isvalid(start + i):
-            nums.append(start+i)
-
+    nums = [start + i for i in range(stop - start + 1) if isvalid(start + i)]
     print(len(nums))
 
-    nums = []
-
-    for i in range(stop - start + 1):
-        if isvalid2(start + i):
-            nums.append(start+i)
+    nums = [start + i for i in range(stop - start + 1) if isvalid2(start + i)]
     print(len(nums))
-
-
-
-
 
