@@ -8,7 +8,7 @@ def parse_list(data_type=int, delim=','):
 def parse_as_str_list():
     with open('input', 'r') as f:
         arr = f.readlines()
-    return arr
+    return [s.strip() for s in arr]
 
 def parse_as_str():
     s = ""
