@@ -98,3 +98,5 @@ class IntCode:
 
 computer = IntCode(ops)
 computer.run(1)
+computer = IntCode(ops)
+computer.run(2)
