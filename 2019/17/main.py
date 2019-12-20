@@ -16,10 +16,6 @@ def up():
     sys.stdout.write('\x1b[1A')
     sys.stdout.flush()
 
-WALL = '#'
-DROID = 'D'
-EMPTY = '.'
-OXY = '0'
 
 DIRS = {
     0: (0, -1), # "NORTH",
@@ -28,6 +24,7 @@ DIRS = {
     3: (-1, 0) # "WEST"
 }
 
+
 CHAR_DIRS = {
     '<': 3,
     '>': 1,
@@ -35,11 +32,14 @@ CHAR_DIRS = {
     '^': 0
 }
 
+
 def opposite(d):
     return (d + 6) % 4
 
+
 def get_pos(pos, direction):
     return tuple(map(sum, zip(pos, DIRS.get(direction))))
+
 
 def is_intersection(grid, pos):
     return [grid.get(get_pos(pos, d), None) for d in range(4)].count('#') == 4 and grid[pos] == '#'
@@ -61,6 +61,7 @@ def print_grid(grid, flush=False):
         sys.stdout.flush()
         for y in range(min(ys), max(ys) + 2):
             up()
+
 
 def get_grid_pathing(grid):
     xs = [c[0] for c in grid.keys()]
@@ -119,9 +120,12 @@ if __name__ == "__main__":
 
     # part 2
     get_grid_pathing(grid)
+
+    # reinit computer
     ops = parse_list()
     ops[0] = 2
     computer = IntCode(ops)
+
     instructions = "A,B,A,C,A,B,C,A,B,C\n"
     A = "R,12,R,4,R,10,R,12\n"
     B = "R,6,L,8,R,10\n"

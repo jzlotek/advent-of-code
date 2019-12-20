@@ -14,7 +14,7 @@ def parse_as_str():
     s = ""
     with open('input', 'r') as f:
         for l in f:
-            s += l
+            s += l.strip()
     return s
 
 def parse_list2d(data_type=int, delim=','):
