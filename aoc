@@ -58,15 +58,21 @@ def sync_wait():
     if offset < 1000:
         time.sleep(offset)
 
+def init_file(path, dir_path, file_name, template):
+    file_main_path = os.path.join(dir_path, file_name)
+    if not os.path.isfile(file_main_path):
+        template_path = os.path.join(path, template)
+        shutil.copy(template_path, file_main_path)
+
 def init(dir_path, data, args):
     """
     Grabs initial prompt and bootstraps python files
     """
     day, year = args.day, args.year
-    python_main_path = os.path.join(dir_path, "main.py")
-    if not os.path.isfile(python_main_path):
-        template_path = os.path.join(path, 'util/python.template')
-        shutil.copy(template_path, python_main_path)
+    init_file(path, dir_path, "main.py", "util/python.template")
+    init_file(path, dir_path, "main.c", "util/c.template")
+    init_file(path, dir_path, "Makefile", "util/Makefile")
+    init_file(path, dir_path, "aoc.h", "util/aoc.h")
 
     if args.wait:
         sync_wait()

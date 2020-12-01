@@ -1,0 +1,9 @@
+#include "aoc.h"
+
+int main() {
+  INT_MATRIX arr = parse_mat_chars();
+  print_matrix_chars(mat);
+  clean_int_matrix(mat);
+
+  return 0;
+}
