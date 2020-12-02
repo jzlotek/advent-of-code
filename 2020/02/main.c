@@ -20,8 +20,8 @@ int main() {
       if (buf[i] == c) lcount++;
       i++;
     }
-    if (lcount >= a && lcount <= b) count_a++; // part1
-    if (buf[a - 1] != buf[b - 1] && (buf[a - 1] == c || buf[b - 1] == c)) count_b++; // part2
+    count_a += lcount >= a && lcount <= b; // part1
+    count_b += buf[a - 1] == c ^ buf[b - 1] == c; // part2
   }
 
   printf("%d %d\n", count_a, count_b);
