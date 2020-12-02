@@ -2,8 +2,8 @@
 
 int main() {
   INT_MATRIX arr = parse_mat_chars();
-  print_matrix_chars(mat);
-  clean_int_matrix(mat);
+  print_matrix_chars(arr);
+  clean_int_matrix(arr);
 
   return 0;
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +9,7 @@ struct int_arr {
   unsigned int maxsize;
   unsigned int currsize;
 };
+
 typedef struct int_arr *INT_ARRAY;
 
 struct int_matrix {

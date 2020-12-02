@@ -70,7 +70,7 @@ def init(dir_path, data, args):
     """
     day, year = args.day, args.year
     init_file(path, dir_path, "main.py", "util/python.template")
-    init_file(path, dir_path, "main.c", "util/c.template")
+    init_file(path, dir_path, "main.c", "util/main.c")
     init_file(path, dir_path, "Makefile", "util/Makefile")
     init_file(path, dir_path, "aoc.h", "util/aoc.h")
 
