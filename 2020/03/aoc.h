@@ -243,6 +243,22 @@ INT_MATRIX parse_mat(char *delim) {
   return arr;
 }
 
+INT_ARRAY parse_arr_chars() {
+  INT_ARRAY arr = new_int_array(0);
+  int MAX_LENGTH = 512;
+
+  // hopefully lines arent longer than this....
+  char buf[MAX_LENGTH];
+  while(fgets(buf, MAX_LENGTH, stdin) != NULL) {
+    int i = 0;
+    while (buf[i] != '\n' && buf[i] != EOF && buf[i] != '\0') {
+      append(arr, (int)buf[i]);
+      ++i;
+    }
+  }
+  return arr;
+}
+
 INT_MATRIX parse_mat_chars() {
   INT_MATRIX arr = new_int_matrix(0, 0);
   int MAX_LENGTH = 512;

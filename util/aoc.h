@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define HIDE_CURSOR() fputs("\e[?25l", stdout);
+#define SHOW_CURSOR() fputs("\e[?25h", stdout);
+
 struct int_arr {
   int *data;
   unsigned int maxsize;
@@ -35,7 +38,7 @@ int width(INT_MATRIX matrix) {
 }
 
 INT_ARRAY new_int_array(unsigned int length) {
-  INT_ARRAY arr = (INT_ARRAY)malloc(sizeof(INT_ARRAY));
+  INT_ARRAY arr = (INT_ARRAY)malloc(sizeof(struct int_arr));
   int start = 2;
   // always make multiple of 2
   while (start < length) {
@@ -54,7 +57,7 @@ INT_ARRAY new_int_array(unsigned int length) {
 }
 
 INT_MATRIX new_int_matrix(unsigned int height, unsigned int width) {
-  INT_MATRIX arr = (INT_MATRIX)malloc(sizeof(INT_MATRIX));
+  INT_MATRIX arr = (INT_MATRIX)malloc(sizeof(struct int_matrix));
   int start = 2;
   while (start < height) {
     start *= 2;
@@ -84,6 +87,40 @@ void append(INT_ARRAY arr, int val) {
   }
   arr->data[arr->currsize] = val;
   arr->currsize++;
+}
+
+int arr_get(INT_ARRAY arr, int idx) {
+  if (idx >= 0 && idx < arr->currsize)
+    return arr->data[idx];
+
+  if (idx < 0) {
+    int tidx = arr->currsize + idx;
+    if (tidx >= 0 && tidx < arr->currsize) {
+      return arr->data[tidx];
+    } else {
+      perror("idx out of range");
+      exit(1);
+    }
+  }
+  perror("idx out of range");
+  exit(1);
+}
+
+int mat_get(INT_MATRIX mat, int r, int c) {
+  if (r >= 0 && r < mat->currheight)
+    return arr_get(mat->data[r], c);
+
+  if (r < 0) {
+    int tr = mat->currheight + r;
+    if (tr >= 0 && tr < mat->currheight) {
+      return arr_get(mat->data[tr], c);
+    } else {
+      perror("idx out of range");
+      exit(1);
+    }
+  }
+  perror("idx out of range");
+  exit(1);
 }
 
 void apppend_col(INT_MATRIX arr, INT_ARRAY col) {
@@ -124,6 +161,16 @@ void print_arr(INT_ARRAY arr) {
   printf("]\n");
 }
 
+int __cmpfn(const void *a, const void *b) {
+  int *x = (int *) a;
+  int *y = (int *) b;
+  return *x - *y;
+}
+
+void arrsort(INT_ARRAY arr) {
+  qsort(arr->data, arr->currsize, sizeof(int), __cmpfn);
+}
+
 void print_arr_chars(INT_ARRAY arr) {
   for (unsigned int i = 0; i < arr->currsize; ++i) {
     printf("%c", arr->data[i]);
@@ -141,6 +188,14 @@ void print_matrix_chars(INT_MATRIX arr) {
   for (unsigned int i = 0; i < arr->currheight; ++i) {
     print_arr_chars(arr->data[i]);
   }
+}
+
+void print_matrix_chars_loop(INT_MATRIX mat) {
+  // Prints the matrix but with flushing so it can be updated on the
+  // screen. use HIDE_CURSOR() before and  SHOW_CURSOR() after
+  print_matrix_chars(mat);
+  printf("\033[%dA", mat->currheight);
+  fflush(stdout);
 }
 
 void clean_int_array(INT_ARRAY arr) {
@@ -184,6 +239,22 @@ INT_MATRIX parse_mat(char *delim) {
     }
     arr->currwidth = len(row);
     append_row(arr, row);
+  }
+  return arr;
+}
+
+INT_ARRAY parse_arr_chars() {
+  INT_ARRAY arr = new_int_array(0);
+  int MAX_LENGTH = 512;
+
+  // hopefully lines arent longer than this....
+  char buf[MAX_LENGTH];
+  while(fgets(buf, MAX_LENGTH, stdin) != NULL) {
+    int i = 0;
+    while (buf[i] != '\n' && buf[i] != EOF && buf[i] != '\0') {
+      append(arr, (int)buf[i]);
+      ++i;
+    }
   }
   return arr;
 }
