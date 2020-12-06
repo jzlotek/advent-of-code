@@ -11,6 +11,7 @@ int count(INT_MATRIX mat) {
       i++;
     }
     count += sum(groupcnts);
+    clean_int_array(groupcnts);
   }
 
   return count;
@@ -31,6 +32,7 @@ int count_b(INT_MATRIX mat) {
     }
     divarr(groupcnts, numInGroup);
     count += sum(groupcnts);
+    clean_int_array(groupcnts);
   }
 
   return count;
