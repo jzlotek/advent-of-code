@@ -1,37 +1,16 @@
 #include "aoc.h"
 
 int getid(INT_ARRAY line) {
-  int row, col;
-  int start, end;
-  int div;
+  int id = 0;
 
-  div = 64;
-  start = 0;
-  end = 127;
-  for (unsigned int i = 0; i < 7; i++) {
-    if (arr_get(line, i) == 'F') {
-      end -= div;
-    } else {
-      start += div;
+  for (unsigned int i = 0; i < line->currsize; i++) {
+    if (arr_get(line, i) == 'L' || arr_get(line, i) == 'F') {
+      id++;
     }
-    div /= 2;
+    id <<= 1;
   }
-  row = start;
 
-  div = 4;
-  start = 0;
-  end = 7;
-  for (unsigned int i = 7; i < line->currsize; i++) {
-    if (arr_get(line, i) == 'L') {
-      end -= div;
-    } else {
-      start += div;
-    }
-    div /= 2;
-  }
-  col = start;
-
-  return row * 8 + col;
+  return id;
 }
 int main() {
   INT_MATRIX mat = parse_mat_chars();
