@@ -47,24 +47,23 @@ int main() {
   ul wrong = values[idx];
   int wrong_idx = idx;
 
-  idx = 1;
+  sum = 0;
   start = 0;
+  idx = 0;
 
-  ul val;
   while(start < wrong_idx) {
-    idx = 0;
-    sum = 0;
-    while (wrong > sum) {
-      val = values[start + idx];
-      if (wrong - sum == val)
-        break;
-      sum += val;
+    if (sum < wrong) {
+      sum += values[start + idx];
       idx++;
-    }
-    if (wrong - sum == val)
+    } else if (sum > wrong) {
+      sum -= values[start];
+      start++;
+      idx--;
+    } else {
       break;
-    start++;
+    }
   }
+
   qsort(&values[start], idx + 1, sizeof(ul), __cmpfn);
   printf("%lu\n", values[start] + values[start + idx]);
 
