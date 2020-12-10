@@ -7,9 +7,6 @@
 #define HIDE_CURSOR() fputs("\e[?25l", stdout);
 #define SHOW_CURSOR() fputs("\e[?25h", stdout);
 
-#define ll long long;
-#define ull unsigned long long;
-
 struct int_arr {
   int *data;
   unsigned int maxsize;

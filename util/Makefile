@@ -1,4 +1,4 @@
 .PHONEY: run
 
-run: *.c *.h
-	gcc *.c -o main && cat input | ./main
+run: *.c
+	gcc *.c -O3 -o main && ./main < input
