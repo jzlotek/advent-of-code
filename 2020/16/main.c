@@ -132,6 +132,7 @@ int main() {
   printf("%lld\n", prod);
 
   clean_int_matrix(alltickets);
+  clean_int_matrix(sieve);
   free(ranges);
 
   return 0;

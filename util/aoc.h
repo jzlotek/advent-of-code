@@ -214,6 +214,13 @@ int sum(INT_ARRAY arr) {
   return sum;
 }
 
+int sum_mat(INT_MATRIX mat) {
+  int s = 0;
+  for (unsigned int i = 0; i < mat->currheight; i++)
+    s += sum(mat->data[i]);
+  return s;
+}
+
 void divarr(INT_ARRAY arr, int d) {
   if (d == 0) {
     perror("div by 0 error");
