@@ -38,7 +38,7 @@ void process_sol(INT_MATRIX tickets, INT_MATRIX sieve, range *ranges, int num) {
         if ((currval < a.low || currval > a.high) && (currval < b.low || currval > b.high)) {
           sieve->data[r / 2]->data[j] = 0;
           break;
-        } 
+        }
       }
     }
   }
