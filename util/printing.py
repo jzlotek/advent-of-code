@@ -10,7 +10,7 @@ def print_grid(grid, flush=False):
     for y in range(min(ys), max(ys) + 1):
         for x in range(min(xs), max(xs) + 1):
             if (x,y) in grid:
-                sys.stdout.write(grid[(x,y)])
+                sys.stdout.write(str(grid[(x,y)]))
             else:
                 sys.stdout.write(' ')
         sys.stdout.write('\n')
