@@ -17,7 +17,6 @@ fn part1(input: &Vec<&str>) -> i32 {
         let val = iter.as_str().parse::<i32>().unwrap();
         pos += val * mult;
         pos = pos.rem_euclid(100);
-        println!("{}", pos);
         count += i32::from(pos == 0);
     }
 
